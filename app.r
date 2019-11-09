@@ -18,9 +18,12 @@ library(shinydashboard)
 ## TO DO
 
 ## Make separate buttons for scales, arpeggios, etc. and then a random exam set... 
-## Hands together or separately
+## Hands together or separately - why is this different? because there is a higher probability 
+# of choosing hands together. Could have done this in the initial set up, but anyway...
 
 ## define functions
+
+## Could have done a function to set up scales... if I'd started doing all grades at same time... 
 
 saveData <- function(data) {
   data <- as.data.frame(t(data), stringsAsFactors = F)
@@ -67,14 +70,16 @@ scale.letter <- c("C", "D♭", "D", "E♭", "E", "F", "F#", "G", "A♭",  "A", "
 g6.scales <- scale.letter
 g7.2.scales <- scale.letter[c(8, 10, 12, 6, 4, 2)]
 g7.1.scales <- scale.letter[c(1, 3, 5, 7, 11, 9)]
+g8.scales <- scale.letter[c(1, 3, 12, 7, 6, 4, 9, 2)]
+
 #print(g7.1.scales)
           
 #print(scale.letter)
 mm <- c("major", "harmonic minor", "melodic minor")
 stacc.leg <- c("staccato", "legato")
-root <- c("root position", "first inversion")
+root <- c("root position", "first inversion", "second inversion")
 
-# grade 6
+### grade 6 scales ####
 scales.6 <- paste("Scale:", apply(expand.grid(scale.letter, mm), 1, paste, collapse = " "))
 #print(scales)
 arps.6 <- paste("Arpeggio:", apply(expand.grid(scale.letter, c("major", "minor")), 1, paste, collapse= " "))
@@ -87,11 +92,11 @@ all.tech.6 <- list(Scales = scales.6,
                  Chrom = paste("Chromatic scale:", scale.letter))
 all.tech.6 <- lapply(all.tech.6, enc2utf8)
 
-
+#### grade 7 scales ####
 # grade 7 group 1
 scales.7.1 <- paste("Scale:", apply(expand.grid(g7.1.scales, mm, stacc.leg), 1, paste, collapse = " "))
 #print(scales.7.1)
-arps.7.1 <- paste("Arpeggio:", apply(expand.grid(g7.1.scales, c("major", "minor"), root), 1, paste, collapse= " "))
+arps.7.1 <- paste("Arpeggio:", apply(expand.grid(g7.1.scales, c("major", "minor"), root[1:2]), 1, paste, collapse= " "))
 scales.3rd.7.1 <- paste("Scale a third apart:", 
                         apply(expand.grid(g7.1.scales, mm[1:2], stacc.leg), 1, paste, collapse= " "))
 contr.7.1 <- paste("Contrary motion:", 
@@ -116,7 +121,7 @@ all.tech.7.1 <- lapply(all.tech.7.1, enc2utf8)
 
 # Grade 7 Group 2 ##
 scales.7.2 <- paste("Scale:", apply(expand.grid(g7.2.scales, mm, stacc.leg), 1, paste, collapse = " "))
-arps.7.2 <- paste("Arpeggio:", apply(expand.grid(g7.2.scales, c("major", "minor"), root), 1, paste, collapse= " "))
+arps.7.2 <- paste("Arpeggio:", apply(expand.grid(g7.2.scales, c("major", "minor"), root[1:2]), 1, paste, collapse= " "))
 scales.3rd.7.2 <- paste("Scale a third apart:", 
                         apply(expand.grid(g7.2.scales, mm[1:2], stacc.leg), 1, paste, collapse= " "))
 contr.7.2 <- paste("Contrary motion:", 
@@ -135,6 +140,35 @@ all.tech.7.2 <- list(Scales = scales.7.2,
                      Dim = c("Diminished sevenths - A", "Diminished sevenths - C#"))
 
 all.tech.7.2 <- lapply(all.tech.7.2, enc2utf8)
+
+### Grade 8 scales####
+scales.8 <- paste("Scale:", apply(expand.grid(g8.scales, mm, stacc.leg), 1, paste, collapse = " "))
+#print(scales.7.1)
+arps.8 <- paste("Arpeggio:", apply(expand.grid(g8.scales, c("major", "minor"), root), 1, paste, collapse= " "))
+scales.3rd.8 <- paste("Scale a third apart:", 
+                        apply(expand.grid(g8.scales, mm[1:2], stacc.leg), 1, paste, collapse= " "))
+scales.6th.8 <- paste("Scale a sixth apart:", 
+                      apply(expand.grid(g8.scales, mm[1:2], stacc.leg), 1, paste, collapse= " "))
+chrom.3rd.8 <- paste("Chromatic scale a minor third apart:", apply(expand.grid(scale.letter, stacc.leg), 1, paste, collapse= " "))
+
+dom7th.8 <- paste("Dominant sevenths: in the key of ", apply(expand.grid(g8.scales), 1, paste, collapse = " "))
+dim7.8 <- paste("Diminshed sevenths:", scale.letter)
+
+all.tech.8 <- list(Scales = scales.8,
+                   Arpeggios = arps.8,
+                   Sc3apart = scales.3rd.8,
+                   Sc6apart = scales.6th.8,
+                   Leg3rds = c("Legato scale in thirds: C major", "Legato scale in thirds: B♭ major"),
+                   Chrom3apart = chrom.3rd.8,
+                   ChromINm3rd = c("Chromatic scale in minor thirds: A#","Chromatic scale in minor thirds: C#"),
+                   wholeTone = "Whole tone scale: E",
+                   Dom7th = dom7th.8,
+                   Dim = dim7.8)
+
+all.tech.8 <- lapply(all.tech.7.1, enc2utf8)
+
+
+### UI stuff #####
 
 # store scale info
 # define fields for results table
@@ -157,7 +191,7 @@ ui <- dashboardPage(
   
   dashboardSidebar(
     h4("Choose grade"),
-    radioButtons("grade", label = "grade", list("6" = "six", "7 group 1" = "seven1", "7 group 2" = "seven2"), selected = "seven1")
+    radioButtons("grade", label = "grade", list("6" = "six", "7 group 1" = "seven1", "7 group 2" = "seven2", "8" = "eight"), selected = "eight")
     ),
   
   dashboardBody(
@@ -211,7 +245,8 @@ server <- function(input, output) {
            
            "six" = all.tech.6,
            "seven1" = all.tech.7.1,
-           "seven2" = all.tech.7.2
+           "seven2" = all.tech.7.2,
+           "eight" = all.tech.8
            )
     })
   
@@ -221,7 +256,8 @@ server <- function(input, output) {
            
            "six" = c(0.5, 0.3, 0.05, 0.05, 0.05, 0.05),
            "seven1" = c(0.2, 0.2, 0.1, 0.1, 0.05,0.05,0.1,0.1,0.05,0.05),
-           "seven2" = c(0.2, 0.2, 0.1, 0.1, 0.05,0.05,0.1,0.1,0.05,0.05)
+           "seven2" = c(0.2, 0.2, 0.1, 0.1, 0.05,0.05,0.1,0.1,0.05,0.05),
+           "eight" = c(0.2, 0.2, 0.1125, 0.1125, 0.025,0.1, 0.025,0.025,0.1,0.1)
            )
     
     
@@ -271,7 +307,8 @@ server <- function(input, output) {
   scale$hands <- switch(input$grade,
                         "six" = c("TS", "TS", "T", "T", "S", "S"),
                         "seven1" = c("TS", "TS", "T", "T", "S", "S", "TS", "T", "TS", "TS"),
-                        "seven2" = c("TS", "TS", "T", "T", "S", "S", "TS", "T", "TS", "TS")
+                        "seven2" = c("TS", "TS", "T", "T", "S", "S", "TS", "T", "TS", "TS"),
+                        "eight" = c("TS", "TS", "TS", "T", "S", "T", "S", "TS", "TS", "TS")
                         )
   })
   
