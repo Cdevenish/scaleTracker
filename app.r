@@ -165,7 +165,7 @@ all.tech.8 <- list(Scales = scales.8,
                    Dom7th = dom7th.8,
                    Dim = dim7.8)
 
-all.tech.8 <- lapply(all.tech.7.1, enc2utf8)
+all.tech.8 <- lapply(all.tech.8, enc2utf8)
 
 
 ### UI stuff #####
@@ -191,7 +191,10 @@ ui <- dashboardPage(
   
   dashboardSidebar(
     h4("Choose grade"),
-    radioButtons("grade", label = "grade", list("6" = "six", "7 group 1" = "seven1", "7 group 2" = "seven2", "8" = "eight"), selected = "eight")
+    radioButtons("grade", label = "grade", list("6" = "six", 
+                                                "7 group 1" = "seven1", 
+                                                "7 group 2" = "seven2", 
+                                                "8" = "eight"), selected = "eight")
     ),
   
   dashboardBody(
