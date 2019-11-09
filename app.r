@@ -216,6 +216,7 @@ ui <- dashboardPage(
     fluidRow(
       box(
         title = "Results", solidHeader = T, status = "success", width = 12,#footer = textOutput("modLayer"),
+        h4("Scales played:", textOutput("noScales")),
         tableOutput("final"),
         tableOutput("practiceList"),
         p()
@@ -265,7 +266,7 @@ server <- function(input, output) {
   
 
   ## Make scales
-  scale <- reactiveValues(sc = NULL, hands = NULL, rating = NULL)
+  scale <- reactiveValues(sc = NULL, hands = NULL, rating = NULL, noScales = NULL)
   
   # scale <- eventReactive(input$action1,{
   #   sample(all.tech()[[sample(seq_along(all.tech()),1,prob = prob())]], 1)})
@@ -350,7 +351,11 @@ server <- function(input, output) {
   # When the Submit button is clicked, save the form data
   observeEvent(input$submit, {
     saveData(formData())
+    scale$noScales = input$submit
   })
+  
+  ## Number of scales played to output text
+  output$noScales <- renderText({scale$noScales})
   
   ## summary table
   output$final <- renderTable({
