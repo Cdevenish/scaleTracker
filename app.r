@@ -1,5 +1,7 @@
 #### Scale shiny app v2019 ####
 
+## GRADE 8 scales updated to 2020 syllabus only.
+
 
 library(shiny)
 library(shinydashboard)
@@ -66,18 +68,48 @@ practiceList <- function() {
 # print("\U266E") # natural
 
 scale.letter <- c("C", "D♭", "D", "E♭", "E", "F", "F#", "G", "A♭",  "A", "B♭", "B")
+#print(scale.letter)
 
 g6.scales <- scale.letter
 g7.2.scales <- scale.letter[c(8, 10, 12, 6, 4, 2)]
 g7.1.scales <- scale.letter[c(1, 3, 5, 7, 11, 9)]
-g8.scales <- scale.letter[c(1, 3, 12, 7, 6, 4, 9, 2)]
+g8.scales <- scale.letter[c(1, 4, 7, 10)]
 
-#print(g7.1.scales)
-          
-#print(scale.letter)
+# all
 mm <- c("major", "harmonic minor", "melodic minor")
 stacc.leg <- c("staccato", "legato")
 root <- c("root position", "first inversion", "second inversion")
+
+
+### Grade 8 scales####
+scales.8 <- paste("Scale:", apply(expand.grid(g8.scales, mm, stacc.leg), 1, paste, collapse = " "))
+scales.6th.8 <- paste("Scale a sixth apart:", 
+                      apply(expand.grid(g8.scales, mm[1:2], stacc.leg), 1, paste, collapse= " "))
+contr.8 <- paste("Contrary motion:", 
+                   apply(expand.grid(g8.scales, mm[1:2], stacc.leg), 1, paste, collapse= " "))
+
+
+Chrom6th <- c("Chromatic scale A major sixth apart legato", "Chromatic scale A major sixth apart staccato")
+
+wholeTone <- paste("Whole-tone scale starting on", 
+                   apply(expand.grid(g8.scales[1:2], stacc.leg), 1, paste, collapse= " "))
+arps.8 <- paste("Arpeggio:", apply(expand.grid(g8.scales, c("major", "minor"), root[3]), 1, paste, collapse= " "))
+dom7th.8 <- paste("Dominant sevenths: in the key of ", apply(expand.grid(g8.scales), 1, paste, collapse = " "))
+dim7.8 <- paste("Diminshed sevenths: starting on", apply(expand.grid(g8.scales[1:2], stacc.leg[2]), 1, paste, collapse= " "))
+
+all.tech.8 <- list(Scales = scales.8,
+                   Arpeggios = arps.8,
+                   Sc6apart = scales.6th.8,
+                   contr8 = contr.8,
+                   Leg3rds = "Legato scale in thirds: E♭ major",
+                   Stac6ths = "Staccato scale in sixths: C major",
+                   Chrom6th = Chrom6th,
+                   wholeTone = wholeTone,
+                   Dom7th = dom7th.8,
+                   Dim = dim7.8)
+
+all.tech.8 <- lapply(all.tech.8, enc2utf8)
+
 
 ### grade 6 scales ####
 scales.6 <- paste("Scale:", apply(expand.grid(scale.letter, mm), 1, paste, collapse = " "))
@@ -140,32 +172,6 @@ all.tech.7.2 <- list(Scales = scales.7.2,
                      Dim = c("Diminished sevenths - A", "Diminished sevenths - C#"))
 
 all.tech.7.2 <- lapply(all.tech.7.2, enc2utf8)
-
-### Grade 8 scales####
-scales.8 <- paste("Scale:", apply(expand.grid(g8.scales, mm, stacc.leg), 1, paste, collapse = " "))
-#print(scales.7.1)
-arps.8 <- paste("Arpeggio:", apply(expand.grid(g8.scales, c("major", "minor"), root), 1, paste, collapse= " "))
-scales.3rd.8 <- paste("Scale a third apart:", 
-                        apply(expand.grid(g8.scales, mm[1:2], stacc.leg), 1, paste, collapse= " "))
-scales.6th.8 <- paste("Scale a sixth apart:", 
-                      apply(expand.grid(g8.scales, mm[1:2], stacc.leg), 1, paste, collapse= " "))
-chrom.3rd.8 <- paste("Chromatic scale a minor third apart:", apply(expand.grid(scale.letter, stacc.leg), 1, paste, collapse= " "))
-
-dom7th.8 <- paste("Dominant sevenths: in the key of ", apply(expand.grid(g8.scales), 1, paste, collapse = " "))
-dim7.8 <- paste("Diminshed sevenths:", scale.letter)
-
-all.tech.8 <- list(Scales = scales.8,
-                   Arpeggios = arps.8,
-                   Sc3apart = scales.3rd.8,
-                   Sc6apart = scales.6th.8,
-                   Leg3rds = c("Legato scale in thirds: C major", "Legato scale in thirds: B♭ major"),
-                   Chrom3apart = chrom.3rd.8,
-                   ChromINm3rd = c("Chromatic scale in minor thirds: A#","Chromatic scale in minor thirds: C#"),
-                   wholeTone = "Whole tone scale: E",
-                   Dom7th = dom7th.8,
-                   Dim = dim7.8)
-
-all.tech.8 <- lapply(all.tech.8, enc2utf8)
 
 
 ### UI stuff #####
@@ -261,7 +267,7 @@ server <- function(input, output) {
            "six" = c(0.5, 0.3, 0.05, 0.05, 0.05, 0.05),
            "seven1" = c(0.2, 0.2, 0.1, 0.1, 0.05,0.05,0.1,0.1,0.05,0.05),
            "seven2" = c(0.2, 0.2, 0.1, 0.1, 0.05,0.05,0.1,0.1,0.05,0.05),
-           "eight" = c(0.2, 0.2, 0.1125, 0.1125, 0.025,0.1, 0.025,0.025,0.1,0.1)
+           "eight" = c(0.3, 0.1, 0.1, 0.1, 0.066, 0.066,0.066, 0.066,0.07,0.066)
            )
     
     
@@ -312,7 +318,7 @@ server <- function(input, output) {
                         "six" = c("TS", "TS", "T", "T", "S", "S"),
                         "seven1" = c("TS", "TS", "T", "T", "S", "S", "TS", "T", "TS", "TS"),
                         "seven2" = c("TS", "TS", "T", "T", "S", "S", "TS", "T", "TS", "TS"),
-                        "eight" = c("TS", "TS", "TS", "T", "S", "T", "S", "TS", "TS", "TS")
+                        "eight" = c("T", "T", "T", "T", "S", "S", "T", "T", "T", "T")
                         )
   })
   
